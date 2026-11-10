@@ -4,6 +4,8 @@ This is a lighter way to run RAES, packaged as plain files that ride on the agen
 
 It comes out of a review of RAES against ten recent articles on AI-assisted development, and a trial on one real project. Most of the evidence behind it is agreement among practitioners rather than measured data, so treat it as a set of hypotheses to test.
 
+RAES itself (the full methodology, reference docs and the earlier `raes-init` and `raes-execute` tools) lives in the [raes repository](https://github.com/aabdullah-bos/raes). This repository holds only the Lite kit.
+
 ---
 
 ## Why change
@@ -116,18 +118,21 @@ What the agent must do, and when it must flag or stop, is defined once in `AGENT
 ## Layout
 
 ```
-lite/
+raes-lite/
   README.md               # this file: direction, principles, slice contract
   bootstrap-prompt.md     # paste into an agent to run S-0000 (orientation) in a new repo
   templates/              # provider-agnostic: AGENTS, pipeline, decisions
   skills/raes-slice/      # SKILL.md in the open Agent Skills format
   adapters/
     claude-code/          # CLAUDE.md template, settings example, install notes
+    codex/                # placeholder: metadata and the original Codex skill, for reference
 ```
 
 The core (README, templates, skill) is meant to work with any provider. Each adapter holds only what one provider needs: its instruction file, its permission settings, and where to install the skill. Whether the core really behaves the same across providers is still untested.
 
 ## Using this kit
+
+Use a tagged release, not the tip of `main`. For example, `git archive --format=tar v0.1.0 | tar -x -C <dir>` gives you the kit without development files or tests. Record the version you installed so that updating is a deliberate step.
 
 Copy these into the target repo:
 
@@ -150,6 +155,7 @@ Then run S-0000 (orientation) using `bootstrap-prompt.md`.
 
 ## Next steps for the kit
 
-- **Deterministic checks are bundled with the skill.** `skills/raes-slice/scripts/` holds `preflight.py`, `inspect_result.py` and `accept_slice.py`, copied from `projects/raes-codex` and adapted for the lite layout, slice body fields and review-slice path rules. Run their tests from the skill folder: `python3 -m unittest discover -s tests`.
+- **Deterministic checks are bundled with the skill.** `skills/raes-slice/scripts/` holds `preflight.py`, `inspect_result.py` and `accept_slice.py`, copied from `projects/raes-codex` in the [raes repository](https://github.com/aabdullah-bos/raes) and adapted for the lite layout, slice body fields and review-slice path rules. Run their tests from the skill folder: `python3 -m unittest discover -s tests`.
 - **Add adapters** for Codex and Copilot.
 - **Migrate existing projects** (for example Me Fighter) to stable slice IDs, so the scripts can parse them.
+- **Deferred: ship the kit as an installable plugin** instead of files to copy. For Claude Code, that means a `.claude-plugin/plugin.json` manifest, `skills/raes-slice/`, and a setup skill that replaces the copy steps in `bootstrap-prompt.md`, installed from a marketplace and pinned to a version. Installed plugins live outside the project, so they don't show up in the inspection snapshot, a slice can't edit them, and copies can't drift. Each provider (Codex, Copilot) needs its own packaging. Revisit once tagged releases exist.

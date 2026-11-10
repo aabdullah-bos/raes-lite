@@ -1,6 +1,6 @@
 # Claude Code adapter
 
-Everything Claude Code needs beyond the provider-agnostic core in `lite/`.
+Everything Claude Code needs beyond the provider-agnostic core of this kit.
 
 ## Install into a target repo
 

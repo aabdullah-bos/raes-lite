@@ -1,6 +1,6 @@
 # Prompt: set up RAES Lite in a new repo (paste into your agent at the target repo's root)
 
-I'm adopting RAES Lite in this repo. Start by reading `lite/README.md` (or wherever I've put the kit) for the principles and the slice contract.
+I'm adopting RAES Lite in this repo. Start by reading the RAES Lite kit's `README.md` (wherever I've put the kit; for example `raes-lite/README.md`) for the principles and the slice contract.
 
 **Your task: slice S-0000, orientation. Read only, and propose before writing anything.**
 
