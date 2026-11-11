@@ -26,7 +26,7 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - question: what does this repo contain, how is it validated today, and what is still unknown?
   - experiment: the agent flags at least one Unknown rather than inventing a missing contract
 
-- [ ] S-0001 | execution | Remove Write deny rules from the Claude Code settings example
+- [x] S-0001 | execution | Remove Write deny rules from the Claude Code settings example
 
   - scope: delete the `Write(...)` entries from `adapters/claude-code/settings.example.json`, since `Edit(...)` rules already cover Write and `Write(...)` rules trigger a startup warning; adjust `adapters/claude-code/README.md` only if it mentions them
   - out_of_scope: `.claude/settings.json`, the pinned skill, every other deny rule, any other adapter
@@ -72,3 +72,15 @@ Drafted `AGENTS.md`, `docs/pipeline.md` and `docs/decisions.md` for this repo. T
 - Proposed decisions: L-006 (one canonical decision log), L-007 (Python 3.10 or later), L-008 (S-0000 runs outside the scripted flow).
 - Experiment held: the agent raised Unknowns U1 to U8 instead of inventing contracts. U4, U5, U6 and U8 are still open.
 - Next recommended slice: S-0001.
+
+### S-0001
+
+Removed `"Write(AGENTS.md)"`, the only `Write(` entry, from `adapters/claude-code/settings.example.json`. `adapters/claude-code/README.md` doesn't mention `Write(` rules, so it is unchanged.
+
+- Validation: the example is valid JSON with no `Write(` entries (this failed before the edit). The remaining 11 deny rules match `HEAD` exactly. The unittest suite passes (64 tests). Inspection was `validated` with `in_scope`.
+- Experiment held: the JSON stays valid and has no `Write(` entries, and the rules that remain are unchanged. `Write(AGENTS.md)` was the last entry, so the diff also shows the trailing comma coming off `Edit(AGENTS.md)`; the rule itself is unchanged.
+- Flags raised:
+  - The first acceptance attempt was blocked with `VALIDATION_STATE_STALE`. Running the pinned scripts without `PYTHONDONTWRITEBYTECODE=1` writes `.claude/skills/raes-slice/scripts/__pycache__/`, which is gitignored, and the snapshot picks it up. Rerunning inspection and acceptance with `PYTHONDONTWRITEBYTECODE=1` worked. Inspection still listed `__pycache__/inspect_result.cpython-312.pyc` as untracked. This is the problem S-0003 fixes. Until the pinned copy is refreshed, SKILL.md could tell agents to run the scripts with `PYTHONDONTWRITEBYTECODE=1`.
+  - In `docs/decisions.md`, L-006 and L-007 have the status `accept`, but L-009's status list says `accepted`. A human needs to correct the Status cells.
+- Proposed decisions: none.
+- Next recommended slice: S-0003. It removes the bytecode problem behind the stale-state block above.

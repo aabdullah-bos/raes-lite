@@ -11,8 +11,7 @@
       "Bash(terragrunt destroy:*)",
       "Bash(terragrunt run-all:*)",
       "Bash(packer build:*)",
-      "Edit(AGENTS.md)",
-      "Write(AGENTS.md)"
+      "Edit(AGENTS.md)"
     ]
   }
 }
