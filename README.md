@@ -147,13 +147,7 @@ Then run S-0000 (orientation) using `bootstrap-prompt.md`.
 
 ## Design decisions
 
-| ID | Decision | Status | Revisit when |
-|---|---|---|---|
-| L-001 | Slices use stable IDs: `- [ ] <id> \| <type> \| <label>`, the format the deterministic scripts already parse | accepted | — |
-| L-002 | Two slice types (execution, review). Review is widened to allow commands, read-only queries and disposable environments; there is no separate learning type | provisional | A slice first needs throwaway code (a spike) to answer its question |
-| L-004 | The pipeline file is frozen during a slice. `accept_slice.py` ticks the checkbox, and the handoff note is written after acceptance (or after a blocked result) | accepted | Handoff notes written after acceptance prove unreliable |
-| L-005 | `allowed_paths` (globs the scripts check) is a separate body line from `scope` (prose for people) | accepted | — |
-| L-003 | The orientation slice (S-0000) is how RAES is applied to an existing repo. It stands in for the planned `raes-discover` CLI | provisional | Orientation proves too manual to repeat across repos |
+The kit's design decisions are recorded in docs/decisions.md in the raes-lite repository: https://github.com/aabdullah-bos/raes-lite/blob/main/docs/decisions.md
 
 ## Next steps for the kit
 
