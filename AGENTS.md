@@ -7,7 +7,7 @@ raes-lite is the RAES Lite kit: plain files and a skill that run RAES slices ins
 Current work: make the kit safe to build with itself and to release by tag, starting with the problems found while setting it up.
 
 ## Repo map
-- `README.md`: direction, principles, slice contract, and (for now) design decisions L-001 to L-005.
+- `README.md`: direction, principles and slice contract. Design decisions live in `docs/decisions.md`.
 - `bootstrap-prompt.md`: the S-0000 (orientation) prompt adopters paste into their agent.
 - `templates/`: the AGENTS, pipeline and decisions templates that adopters copy.
 - `skills/raes-slice/`: **the product, under development.** `SKILL.md` plus `scripts/` (`preflight.py`, `inspect_result.py`, `accept_slice.py`; Python standard library plus `git` only). `tests/` holds the unittest suite and fixtures, and is left out of releases.
@@ -16,6 +16,7 @@ Current work: make the kit safe to build with itself and to release by tag, star
 - `.claude/settings.json`: shared deny rules.
 - `.gitattributes`: sets what a release archive contains. Dev files (`AGENTS.md`, `CLAUDE.md`, `docs/`, `.claude/`, skill tests) are export-ignored.
 - `docs/pipeline.md`, `docs/decisions.md`: this repo's slice backlog and its single canonical decision log (see L-006).
+- `docs/release.md`: the release checklist (versions, tagging, refreshing the pinned copy).
 - Releases are git tags. There is no CI in the repo.
 
 ## Done means these checks pass
@@ -32,7 +33,6 @@ Current work: make the kit safe to build with itself and to release by tag, star
 
 ## Unknowns
 - **U4: CI.** None in the repo. None yet: add after the need shows up in three slices.
-- **U5: Release process.** Who tags, what must pass first, and when the pinned copy is refreshed. Settled by a release checklist from the human.
 - **U6: Contract consumers.** Whether the slice format, lite artifact paths, script JSON input and output, script CLI flags and release archive contents are consumed only by the owner's repos or also by outside adopters. That decides how strict version bumps must be. Settled by the human.
 - **U8: Linter or formatter.** None configured. None yet: add after the need shows up in three slices.
 
