@@ -33,7 +33,6 @@ Current work: make the kit safe to build with itself and to release by tag, star
 
 ## Unknowns
 - **U4: CI.** None in the repo. None yet: add after the need shows up in three slices.
-- **U6: Contract consumers.** Whether the slice format, lite artifact paths, script JSON input and output, script CLI flags and release archive contents are consumed only by the owner's repos or also by outside adopters. That decides how strict version bumps must be. Settled by the human.
 - **U8: Linter or formatter.** None configured. None yet: add after the need shows up in three slices.
 
 ---
