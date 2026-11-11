@@ -89,35 +89,47 @@ def _parse_porcelain_v2_z(raw: bytes) -> list[dict[str, str]]:
     return sorted(result, key=lambda entry: (entry["path"], entry["status"]))
 
 
-def _file_snapshot(project_root: Path) -> dict[str, dict[str, Any]]:
+def _file_snapshot(
+    project_root: Path,
+    ignored: set[str] | None = None,
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+    """Return (files, ignored_files). Paths in ``ignored`` go only to the second map."""
+    ignored = ignored or set()
     files: dict[str, dict[str, Any]] = {}
+    ignored_files: dict[str, dict[str, Any]] = {}
     for path in sorted(project_root.rglob("*")):
         relative = path.relative_to(project_root)
         if ".git" in relative.parts:
             continue
+        target_map = ignored_files if relative.as_posix() in ignored else files
         if path.is_symlink():
             target = os.readlink(path)
-            files[relative.as_posix()] = {
+            target_map[relative.as_posix()] = {
                 "kind": "symlink",
                 "sha256": sha256_text(target),
                 "mode": path.lstat().st_mode & 0o777,
             }
         elif path.is_file():
-            files[relative.as_posix()] = {
+            target_map[relative.as_posix()] = {
                 "kind": "file",
                 "sha256": sha256_bytes(path.read_bytes()),
                 "mode": path.stat().st_mode & 0o777,
             }
-    return files
+    return files, ignored_files
+
+
+def _split_z(raw: bytes) -> list[str]:
+    return sorted(item for item in raw.decode("utf-8", errors="surrogateescape").split("\0") if item)
+
+
+def _ignored_untracked_files(project_root: Path) -> set[str]:
+    completed = _git(project_root, "ls-files", "-z", "--others", "--ignored", "--exclude-standard", "--", ".")
+    return set(_split_z(completed.stdout))
 
 
 def _tracked_files(project_root: Path) -> list[str]:
     completed = _git(project_root, "ls-files", "-z", "--", ".")
-    return sorted(
-        item
-        for item in completed.stdout.decode("utf-8", errors="surrogateescape").split("\0")
-        if item
-    )
+    return _split_z(completed.stdout)
 
 
 def _repository_state(project_root: Path) -> dict[str, Any]:
@@ -145,23 +157,34 @@ def _repository_state(project_root: Path) -> dict[str, Any]:
         git_root_value: str | None = str(git_root)
         tracked_files = _tracked_files(root)
         git_status = _parse_porcelain_v2_z(status_result.stdout)
+        ignored = _ignored_untracked_files(root)
     else:
         version_control = "none"
         git_root_value = None
         git_head = None
         tracked_files = []
         git_status = []
+        ignored = set()
 
+    files, ignored_files = _file_snapshot(root, ignored)
     state_without_fingerprint = {
         "version_control": version_control,
         "git_root": git_root_value,
         "git_head": git_head,
-        "files": _file_snapshot(root),
+        "files": files,
         "tracked_files": tracked_files,
         "git_status": git_status,
     }
+    # Untracked gitignored files are kept out of the fingerprint so that caches and
+    # local secrets never make evidence stale; they are compared only for warnings.
     fingerprint = sha256_text(json.dumps(state_without_fingerprint, sort_keys=True, separators=(",", ":")))
-    return {**state_without_fingerprint, "fingerprint": fingerprint}
+    return {**state_without_fingerprint, "ignored_files": ignored_files, "fingerprint": fingerprint}
+
+
+def _changed_ignored_paths(baseline: dict[str, Any], final: dict[str, Any]) -> list[str]:
+    before: dict[str, dict[str, Any]] = baseline.get("ignored_files", {})
+    after: dict[str, dict[str, Any]] = final.get("ignored_files", {})
+    return sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
 
 
 def capture_baseline(project_root: str | os.PathLike[str]) -> dict[str, Any]:
@@ -437,6 +460,14 @@ def inspect_result(
             {
                 "code": "UNEXPLAINED_CHANGE",
                 "message": "Changed path is not covered by the supplied expected-path patterns and requires semantic review.",
+                "path": path,
+            }
+        )
+    for path in _changed_ignored_paths(baseline["repository"], final_repository):
+        warnings.append(
+            {
+                "code": "IGNORED_PATH_CHANGED",
+                "message": "An untracked gitignored path changed. It does not block the slice or affect the fingerprint.",
                 "path": path,
             }
         )
