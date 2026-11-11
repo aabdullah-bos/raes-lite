@@ -75,6 +75,13 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - experiment: the sentence appears exactly once in `README.md`, directly after the tagged-release paragraph, no other line of the README changes, and the test suite still passes
   - allowed_paths: README.md
 
+- [ ] S-0008 | execution | Show ignored-path warnings at the review gate
+
+  - scope: in `skills/raes-slice/SKILL.md`, step 5 (Review gate and acceptance), require the summary to list every `IGNORED_PATH_CHANGED` warning from inspection, with its path, before anything else, and to say plainly when there are none. These are the only signal that a slice wrote to a gitignored file such as `.env`, and `git diff` never shows them (S-0003)
+  - out_of_scope: the scripts and their JSON output, every other step of `SKILL.md`, the other warning codes, the pinned copy in `.claude/skills/`
+  - experiment: `SKILL.md` names `IGNORED_PATH_CHANGED` in step 5, and the first S-0004 or later slice run after the pinned copy is refreshed lists ignored-path warnings (or says there are none) at the top of its review summary. The test suite still passes
+  - allowed_paths: skills/raes-slice/SKILL.md
+
 ## Handoff Notes
 
 ### S-0000
