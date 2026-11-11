@@ -134,6 +134,8 @@ The core (README, templates, skill) is meant to work with any provider. Each ada
 
 Use a tagged release, not the tip of `main`. For example, `git archive --format=tar v0.1.0 | tar -x -C <dir>` gives you the kit without development files or tests. Record the version you installed so that updating is a deliberate step.
 
+`AGENTS.md`, `CLAUDE.md`, `docs/` and `.claude/` at the root of this repository are for developing the kit, which is built with its own last release. They are not part of the kit and are left out of releases, so don't copy them.
+
 Copy these into the target repo:
 
 - `templates/AGENTS.template.md` becomes `AGENTS.md`
