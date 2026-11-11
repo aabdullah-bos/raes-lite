@@ -35,7 +35,7 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
 
 - [ ] S-0002 | execution | Move design decisions L-001 to L-005 into docs/decisions.md
 
-  - scope: move the L-001 to L-005 rows from the README's Design decisions table into `docs/decisions.md` with their wording and status unchanged, and replace the README table with a link to the log
+  - scope: move the L-001 to L-005 rows from the README's Design decisions table into `docs/decisions.md` with their wording and status unchanged, and replace the README table with a link to the log. Map the README columns into the log's format (`ID | Status | Decision | Why | Confirm or overturn when | Date`): Revisit when becomes Confirm or overturn when, Why is left as "—", and Date is the date the decision first appeared in git history
   - out_of_scope: changing what any decision says or its status, L-006 and later entries, any other README section, templates
   - experiment: every L-001 to L-005 row appears exactly once in `docs/decisions.md`, none remain in `README.md`, and the test suite still passes
   - allowed_paths: README.md, docs/decisions.md
@@ -46,6 +46,13 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - out_of_scope: the pinned copy in `.claude/skills/`, other scripts, the JSON output schema, how tracked and untracked (not ignored) files are reported
   - experiment: a new test that creates a gitignored file (for example `__pycache__/x.pyc`) between baseline and inspect fails before the change and passes after, and all existing tests keep passing
   - allowed_paths: skills/raes-slice/**
+
+- [ ] S-0004 | execution | Put Status second in the decisions template
+
+  - scope: reorder the table header and the example row in `templates/decisions.template.md` to `ID | Status | Decision | Why | Confirm or overturn when | Date`
+  - out_of_scope: the explanatory text above the table, `docs/decisions.md`, every other template
+  - experiment: the template has the new header, the example row has the same six values in the new order, and the test suite still passes
+  - allowed_paths: templates/decisions.template.md
 
 ## Handoff Notes
 
