@@ -6,18 +6,22 @@ Agents in this repo can't tag or push (see `.claude/settings.json`). The human d
 
 ## Versions
 
-Tags use `vMAJOR.MINOR.PATCH`.
+Tags use `vMAJOR.MINOR.PATCH`. The kit is public, so assume people you don't know use it. The rules follow semantic versioning, including its convention for versions below 1.0 (L-011).
 
-- **PATCH**: fixes and wording changes that don't change a contract.
-- **MINOR**: additions that existing users don't have to act on, such as a new optional slice field or a new adapter.
-- **MAJOR**: changes that existing users must act on. These are the contracts:
-  - the slice declaration line and its body fields
-  - the lite artifact paths (`AGENTS.md`, `docs/pipeline.md`, `docs/decisions.md`)
-  - the scripts' JSON output and the `validation.json` they take as input
-  - the scripts' command-line flags
-  - what a release archive contains
+The contracts are:
+- the slice declaration line and its body fields
+- the lite artifact paths (`AGENTS.md`, `docs/pipeline.md`, `docs/decisions.md`)
+- the scripts' JSON output and the `validation.json` they take as input
+- the scripts' command-line flags
+- what a release archive contains
 
-How strict this needs to be depends on U6 in `AGENTS.md`: whether people outside your own repos use the kit.
+**Before 1.0 (now):**
+- **PATCH**: fixes, wording changes, and additions that break no contract, such as a new JSON field, a new warning code or a new optional slice field.
+- **MINOR**: any change that breaks a contract: removing or renaming something, changing what it means, or moving an artifact path.
+
+**From 1.0:** PATCH for fixes, MINOR for additions, MAJOR for breaking changes.
+
+At every version, the release notes list every contract change, whether it adds something or breaks something.
 
 ## 1. Work slices (agent and you)
 

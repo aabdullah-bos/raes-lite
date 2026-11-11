@@ -68,6 +68,13 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - experiment: a test that copies the scripts to a temporary folder and runs each one without `PYTHONDONTWRITEBYTECODE` finds no `__pycache__/` there afterwards; it fails before the change and passes after. All existing tests still pass
   - allowed_paths: skills/raes-slice/**
 
+- [ ] S-0007 | execution | Tell users what a version number promises
+
+  - scope: in the README's "Using this kit" section, after the paragraph about using a tagged release, add: "Until 1.0, a MINOR version may change a contract: the slice format, the artifact paths, or the scripts' JSON and flags. Pin a tag, and read the release notes before upgrading." (L-011)
+  - out_of_scope: every other README section and paragraph, `docs/release.md`, the templates, the scripts
+  - experiment: the sentence appears exactly once in `README.md`, directly after the tagged-release paragraph, no other line of the README changes, and the test suite still passes
+  - allowed_paths: README.md
+
 ## Handoff Notes
 
 ### S-0000
