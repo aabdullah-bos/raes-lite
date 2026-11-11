@@ -157,5 +157,5 @@ Then run S-0000 (orientation) using `bootstrap-prompt.md`.
 
 - **Deterministic checks are bundled with the skill.** `skills/raes-slice/scripts/` holds `preflight.py`, `inspect_result.py` and `accept_slice.py`, copied from `projects/raes-codex` in the [raes repository](https://github.com/aabdullah-bos/raes) and adapted for the lite layout, slice body fields and review-slice path rules. Run their tests from the skill folder: `python3 -m unittest discover -s tests`.
 - **Add adapters** for Codex and Copilot.
-- **Migrate existing projects** (for example Me Fighter) to stable slice IDs, so the scripts can parse them.
+- **Migrate existing projects** They need stable slice IDs, so the scripts can parse them.
 - **Deferred: ship the kit as an installable plugin** instead of files to copy. For Claude Code, that means a `.claude-plugin/plugin.json` manifest, `skills/raes-slice/`, and a setup skill that replaces the copy steps in `bootstrap-prompt.md`, installed from a marketplace and pinned to a version. Installed plugins live outside the project, so they don't show up in the inspection snapshot, a slice can't edit them, and copies can't drift. Each provider (Codex, Copilot) needs its own packaging. Revisit once tagged releases exist.
