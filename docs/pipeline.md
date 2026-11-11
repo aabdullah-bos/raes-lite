@@ -40,11 +40,11 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - experiment: every L-001 to L-005 row appears exactly once in `docs/decisions.md`, none remain in `README.md`, and the test suite still passes
   - allowed_paths: README.md, docs/decisions.md
 
-- [ ] S-0003 | execution | Skip gitignored files in the inspect_result.py snapshot
+- [ ] S-0003 | execution | Report gitignored changes separately in inspection
 
-  - scope: `_file_snapshot` in `skills/raes-slice/scripts/inspect_result.py` currently walks every file with `rglob`; make it leave out gitignored paths, with a failing test written first
-  - out_of_scope: the pinned copy in `.claude/skills/`, other scripts, the JSON output schema, how tracked and untracked (not ignored) files are reported
-  - experiment: a new test that creates a gitignored file (for example `__pycache__/x.pyc`) between baseline and inspect fails before the change and passes after, and all existing tests keep passing
+  - scope: in `skills/raes-slice/scripts/inspect_result.py`, keep untracked gitignored paths (from `git ls-files --others --ignored --exclude-standard`) out of the `files` map, the fingerprint and the change lists, so they never block a slice or make evidence stale. Snapshot them separately, and report each one that changed between baseline and inspection as a non-blocking `IGNORED_PATH_CHANGED` warning. Repos without git keep walking every file. Write failing tests first
+  - out_of_scope: the pinned copy in `.claude/skills/`, the other scripts, how tracked and untracked (not ignored) files are reported, removing or renaming existing JSON fields (adding fields is allowed)
+  - experiment: tests show that (1) a new `__pycache__` file between baseline and inspection doesn't block a review slice or change the fingerprint, (2) editing an ignored file such as `.env` produces an `IGNORED_PATH_CHANGED` warning, and (3) a tracked file that matches an ignore rule is still reported as modified. All existing tests still pass
   - allowed_paths: skills/raes-slice/**
 
 - [ ] S-0004 | execution | Put Status second in the decisions template
@@ -60,6 +60,13 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - out_of_scope: the table header and column order (S-0004), `docs/decisions.md`, every other README section, `AGENTS.template.md`, `SKILL.md`
   - experiment: no shipped file except git history uses `provisional` as a status, the template lists exactly the four statuses in L-009, and the test suite still passes
   - allowed_paths: templates/decisions.template.md, README.md
+
+- [ ] S-0006 | execution | Stop the scripts from writing bytecode
+
+  - scope: make `preflight.py`, `inspect_result.py` and `accept_slice.py` set `sys.dont_write_bytecode = True` before they import each other, so running them never creates `__pycache__/` next to the scripts, whether or not `PYTHONDONTWRITEBYTECODE` is set. Write a failing test first
+  - out_of_scope: the pinned copy in `.claude/skills/`, the scripts' behavior and JSON output, `SKILL.md`, the tests' own bytecode
+  - experiment: a test that copies the scripts to a temporary folder and runs each one without `PYTHONDONTWRITEBYTECODE` finds no `__pycache__/` there afterwards; it fails before the change and passes after. All existing tests still pass
+  - allowed_paths: skills/raes-slice/**
 
 ## Handoff Notes
 
