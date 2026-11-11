@@ -35,8 +35,8 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
 
 - [ ] S-0002 | execution | Move design decisions L-001 to L-005 into docs/decisions.md
 
-  - scope: move the L-001 to L-005 rows from the README's Design decisions table into `docs/decisions.md` with their wording and status unchanged, and replace the README table with a link to the log. Map the README columns into the log's format (`ID | Status | Decision | Why | Confirm or overturn when | Date`): Revisit when becomes Confirm or overturn when, Why is left as "—", and Date is the date the decision first appeared in git history
-  - out_of_scope: changing what any decision says or its status, L-006 and later entries, any other README section, templates
+  - scope: move the L-001 to L-005 rows from the README's Design decisions table into `docs/decisions.md` with their wording unchanged and their status unchanged except that `provisional` becomes `accepted` (L-009), and replace the README table with a link to the log. Map the README columns into the log's format (`ID | Status | Decision | Why | Confirm or overturn when | Date`): Revisit when becomes Confirm or overturn when, Why is left as "—", and Date is the date the decision first appeared in git history
+  - out_of_scope: changing what any decision says, any status change other than `provisional` to `accepted`, L-006 and later entries, any other README section, templates
   - experiment: every L-001 to L-005 row appears exactly once in `docs/decisions.md`, none remain in `README.md`, and the test suite still passes
   - allowed_paths: README.md, docs/decisions.md
 
@@ -53,6 +53,13 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - out_of_scope: the explanatory text above the table, `docs/decisions.md`, every other template
   - experiment: the template has the new header, the example row has the same six values in the new order, and the test suite still passes
   - allowed_paths: templates/decisions.template.md
+
+- [ ] S-0005 | execution | Define decision statuses in the kit
+
+  - scope: apply L-009 to the shipped kit. In `templates/decisions.template.md`, replace the text above the table with the status definitions and the Status-cell editing rule from `docs/decisions.md`, and change the example row's status from `provisional` to `accepted`. In the README's Decision rights section, replace "Decisions can be provisional" with "Any decision can be overturned: record the evidence that would confirm or overturn it, then supersede it with a new entry"
+  - out_of_scope: the table header and column order (S-0004), `docs/decisions.md`, every other README section, `AGENTS.template.md`, `SKILL.md`
+  - experiment: no shipped file except git history uses `provisional` as a status, the template lists exactly the four statuses in L-009, and the test suite still passes
+  - allowed_paths: templates/decisions.template.md, README.md
 
 ## Handoff Notes
 
