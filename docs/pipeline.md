@@ -33,7 +33,7 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - experiment: the example stays valid JSON, it has no `Write(` entries, and every rule that remains is unchanged (the only diff lines in the example are removals)
   - allowed_paths: adapters/claude-code/**
 
-- [ ] S-0002 | execution | Move design decisions L-001 to L-005 into docs/decisions.md
+- [x] S-0002 | execution | Move design decisions L-001 to L-005 into docs/decisions.md
 
   - scope: move the L-001 to L-005 rows from the README's Design decisions table into `docs/decisions.md` with their wording unchanged and their status unchanged except that `provisional` becomes `accepted` (L-009), and replace the README table with a link to the log. Map the README columns into the log's format (`ID | Status | Decision | Why | Confirm or overturn when | Date`): Revisit when becomes Confirm or overturn when, Why is left as "—", and Date is the date the decision first appeared in git history
   - out_of_scope: changing what any decision says, any status change other than `provisional` to `accepted`, L-006 and later entries, any other README section, templates
@@ -84,3 +84,18 @@ Removed `"Write(AGENTS.md)"`, the only `Write(` entry, from `adapters/claude-cod
   - In `docs/decisions.md`, L-006 and L-007 have the status `accept`, but L-009's status list says `accepted`. A human needs to correct the Status cells.
 - Proposed decisions: none.
 - Next recommended slice: S-0003. It removes the bytecode problem behind the stale-state block above.
+
+### S-0002
+
+Moved L-001 to L-005 from the README's Design decisions table into `docs/decisions.md`, inserted above L-006 in ID order, with the decision wording unchanged. L-002 and L-003 changed from `provisional` to `accepted` (L-009). "Why" is "—", "Date" is 2026-11-09 (commit `657a74f`), and "Revisit when" became "Confirm or overturn when". The bridging sentence above the table was deleted. In `README.md`, the table under "## Design decisions" was replaced with plain text and the full GitHub URL of the log, because `docs/` is export-ignored and a relative link would break in release archives.
+
+- Validation: the experiment check (each of L-001 to L-005 once in `docs/decisions.md`, none in `README.md`, bridging sentence gone, no non-accepted status on those rows) failed before the edits and passed after. The unittest suite passes (64 tests). Inspection was `validated` with `in_scope`.
+- Experiment held: every L-001 to L-005 row appears exactly once in `docs/decisions.md`, none remain in `README.md`, and the test suite still passes.
+- Flags raised (all settled by the human before the edits):
+  - L-001 and L-005 had "—" in Revisit when, which L-009 doesn't allow for `accepted` entries. The human supplied the Confirm or overturn text.
+  - Row placement: the human chose to insert above L-006 in ID order. This relies on L-010, which is still `proposed`; the human approved the placement for this slice directly.
+  - The bridging sentence was deleted, as the human directed.
+  - The README uses a full URL rather than a relative link, as the human directed.
+- Proposed decisions: L-010 (append-only means no existing entry is edited or deleted, except the Status cell; adding entries is always allowed). It was added at the human's request, before the baseline.
+- Proposed `AGENTS.md` change (the human will make it): line 10 currently reads "`README.md`: direction, principles, slice contract, and (for now) design decisions L-001 to L-005." Suggested: "`README.md`: direction, principles and slice contract. Design decisions live in `docs/decisions.md`."
+- Next recommended slice: S-0003. It removes the bytecode problem behind the stale-state block in S-0001.
