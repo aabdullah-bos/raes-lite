@@ -47,7 +47,7 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - experiment: tests show that (1) a new `__pycache__` file between baseline and inspection doesn't block a review slice or change the fingerprint, (2) editing an ignored file such as `.env` produces an `IGNORED_PATH_CHANGED` warning, and (3) a tracked file that matches an ignore rule is still reported as modified. All existing tests still pass
   - allowed_paths: skills/raes-slice/**
 
-- [ ] S-0004 | execution | Put Status second in the decisions template
+- [x] S-0004 | execution | Put Status second in the decisions template
 
   - scope: reorder the table header and the example row in `templates/decisions.template.md` to `ID | Status | Decision | Why | Confirm or overturn when | Date`
   - out_of_scope: the explanatory text above the table, `docs/decisions.md`, every other template
@@ -133,3 +133,14 @@ In `skills/raes-slice/scripts/inspect_result.py`, untracked gitignored paths (fr
   - Ignored files are still read and hashed for change detection, so large ignored folders cost the same time as before.
 - Proposed decisions: none.
 - Next recommended slice: S-0006 (stop the scripts from writing bytecode). The pinned copy keeps needing `PYTHONDONTWRITEBYTECODE=1` until the next release refreshes it.
+
+### S-0004
+
+Reordered the table header and the example row in `templates/decisions.template.md` to `ID | Status | Decision | Why | Confirm or overturn when | Date`, matching `docs/decisions.md`. The example row keeps the same six values, including `provisional`, which S-0005 replaces. The text above the table is unchanged.
+
+- Validation: a check for the new header and the reordered example row failed before the edit and passed after. The unittest suite passes (71 tests). Inspection was `validated` with `in_scope`, with no warnings. All pinned scripts ran with `PYTHONDONTWRITEBYTECODE=1`.
+- Experiment held: the template has the new header, the example row has the same six values in the new order, and the test suite still passes.
+- Ignored-path warnings: none. The pinned copy predates S-0008, so this note doesn't count toward S-0008's experiment.
+- Flags raised: none.
+- Proposed decisions: none.
+- Next recommended slice: S-0005 (define decision statuses in the kit). It edits the same template and depends on this column order.
