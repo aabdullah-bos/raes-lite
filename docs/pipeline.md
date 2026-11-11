@@ -40,7 +40,7 @@ The pipeline file itself is not edited during a slice: acceptance ticks the chec
   - experiment: every L-001 to L-005 row appears exactly once in `docs/decisions.md`, none remain in `README.md`, and the test suite still passes
   - allowed_paths: README.md, docs/decisions.md
 
-- [ ] S-0003 | execution | Report gitignored changes separately in inspection
+- [x] S-0003 | execution | Report gitignored changes separately in inspection
 
   - scope: in `skills/raes-slice/scripts/inspect_result.py`, keep untracked gitignored paths (from `git ls-files --others --ignored --exclude-standard`) out of the `files` map, the fingerprint and the change lists, so they never block a slice or make evidence stale. Snapshot them separately, and report each one that changed between baseline and inspection as a non-blocking `IGNORED_PATH_CHANGED` warning. Repos without git keep walking every file. Write failing tests first
   - out_of_scope: the pinned copy in `.claude/skills/`, the other scripts, how tracked and untracked (not ignored) files are reported, removing or renaming existing JSON fields (adding fields is allowed)
@@ -106,3 +106,16 @@ Moved L-001 to L-005 from the README's Design decisions table into `docs/decisio
 - Proposed decisions: L-010 (append-only means no existing entry is edited or deleted, except the Status cell; adding entries is always allowed). It was added at the human's request, before the baseline.
 - Proposed `AGENTS.md` change (the human will make it): line 10 currently reads "`README.md`: direction, principles, slice contract, and (for now) design decisions L-001 to L-005." Suggested: "`README.md`: direction, principles and slice contract. Design decisions live in `docs/decisions.md`."
 - Next recommended slice: S-0003. It removes the bytecode problem behind the stale-state block in S-0001.
+
+### S-0003
+
+In `skills/raes-slice/scripts/inspect_result.py`, untracked gitignored paths (from `git ls-files --others --ignored --exclude-standard`) now go into a separate `ignored_files` map in the repository state. They are kept out of `files`, the fingerprint and the change lists. Any ignored path added, edited or deleted between baseline and inspection gets a non-blocking `IGNORED_PATH_CHANGED` warning in `scope_review.warnings`. Repos without git still walk every file. Added `skills/raes-slice/tests/test_ignored_paths.py` (7 tests).
+
+- Validation: four of the new tests failed before the change (3 failures, 1 error) and all 7 pass after. The full unittest suite passes (71 tests: 64 existing plus 7 new). Inspection was `validated` with `in_scope`, with no warnings. All pinned scripts ran with `PYTHONDONTWRITEBYTECODE=1`.
+- Experiment held: (1) a new `src/__pycache__/*.pyc` leaves a review slice `validated`, and the fingerprint matches the baseline; (2) editing `.env` produces `IGNORED_PATH_CHANGED` and doesn't appear in the change lists; (3) a force-tracked `settings.local` that matches `*.local` is still reported as `modified`. All existing tests still pass.
+- Flags raised: none blocking. Points for the human:
+  - The JSON output gained an `ignored_files` map in the repository state and a new `IGNORED_PATH_CHANGED` warning code. Nothing was removed or renamed, but it is a contract addition relevant to U6.
+  - Baseline and inspection should come from the same script version. A v0.1.0 baseline still has ignored files in `files`, so the new inspection would report them as `deleted`. Refreshing the pinned copy after a release settles this.
+  - Ignored files are still read and hashed for change detection, so large ignored folders cost the same time as before.
+- Proposed decisions: none.
+- Next recommended slice: S-0006 (stop the scripts from writing bytecode). The pinned copy keeps needing `PYTHONDONTWRITEBYTECODE=1` until the next release refreshes it.
